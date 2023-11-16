@@ -23,6 +23,7 @@ import {
   Divider,
 } from "@nextui-org/react";
 import { Inter } from "next/font/google";
+import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -35,9 +36,14 @@ interface NavbarProps {
 export const Navbar = ({ showCreateButton }: NavbarProps) => {
   const [isCreateBoardMenuOpen, setIsCreateBoardMenuOpen] = useState(false);
 
+  const router = useRouter();
+
   return (
-    <NextUINavbar isBordered>
-      <NavbarBrand className="max-w-min pr-5">
+    <NextUINavbar isBordered className="h-16">
+      <NavbarBrand
+        className="max-w-min cursor-pointer pr-5"
+        onClick={() => router.push("/")}
+      >
         <p className="font-bold text-inherit">Kanabanana</p>
       </NavbarBrand>
       <NavbarContent className="hidden gap-4 sm:flex" justify="start">
@@ -46,6 +52,7 @@ export const Navbar = ({ showCreateButton }: NavbarProps) => {
             offset={10}
             placement="bottom-start"
             isOpen={isCreateBoardMenuOpen}
+            onOpenChange={(open) => setIsCreateBoardMenuOpen(open)}
           >
             <PopoverTrigger onClick={() => setIsCreateBoardMenuOpen(true)}>
               <Button
@@ -82,8 +89,10 @@ const CreateBoardForm = ({ onClose }: CreateBoardFormProps) => {
       resolver: zodResolver(createBoardInputSchema),
     });
 
+  const router = useRouter();
+
   const createBoard = api.board.create.useMutation({
-    onSuccess: onClose,
+    onSuccess: (data) => void router.push(`/board/${data.id}`),
     onError: (error) => {
       console.error(error);
       onClose();
@@ -93,8 +102,6 @@ const CreateBoardForm = ({ onClose }: CreateBoardFormProps) => {
   return (
     <PopoverContent className={cn("w-auto p-0 dark", inter.className)}>
       <Card className="w-[300px]">
-        <CardHeader>Create a new board</CardHeader>
-        <Divider />
         <CardBody>
           <form
             ref={ref}
