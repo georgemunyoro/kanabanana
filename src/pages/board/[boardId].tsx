@@ -4,9 +4,11 @@ import { type Board as BoardModel } from "@prisma/client";
 import { type GetServerSideProps } from "next";
 import { Navbar } from "@/components/Navbar";
 import { Board } from "@/components/Board";
+import { type BoardData } from "@/components/Board/types";
 
 interface BoardPageProps {
-  board?: Omit<BoardModel, "createdAt" | "updatedAt"> & {
+  board?: Omit<BoardModel, "createdAt" | "updatedAt" | "data"> & {
+    data: BoardData;
     createdAt: string;
     updatedAt: string;
   };
@@ -51,7 +53,12 @@ export const getServerSideProps: GetServerSideProps<BoardPageProps> = async ({
   return {
     props: {
       board: {
-        ...board,
+        ...{
+          ...board,
+          data: JSON.parse(
+            typeof board.data == "string" ? board.data : "{}",
+          ) as BoardData,
+        },
         createdAt: board?.createdAt?.toISOString() ?? "",
         updatedAt: board?.updatedAt?.toISOString() ?? "",
       },

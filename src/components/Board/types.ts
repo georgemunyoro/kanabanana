@@ -1,15 +1,16 @@
+import { type UniqueIdentifier } from "@dnd-kit/core";
+
 export type BoardCard = {
-  id: number;
+  id: UniqueIdentifier;
   title: string;
-  description: string;
 };
 
 export type BoardList = {
-  id: number;
+  id: UniqueIdentifier;
   title: string;
-  cards: BoardCard[];
+  items: BoardCard[];
 };
 
 export type BoardData = {
-  columns: BoardList[];
+  containers: BoardList[];
 };

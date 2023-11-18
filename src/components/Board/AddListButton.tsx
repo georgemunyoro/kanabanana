@@ -46,13 +46,18 @@ export const AddListButton = ({ onAddList }: AddListButtonProps) => {
       onOpenChange={(open) => setIsAddingList(open)}
     >
       <PopoverTrigger onClick={() => setIsAddingList(true)}>
-        <Button className="flex w-80 justify-start">
+        <Button
+          className="mt-2 flex min-w-[300px] justify-start"
+          variant="bordered"
+          color="success"
+          size="lg"
+        >
           <AddToQueue size={20} />
           Add a list
         </Button>
       </PopoverTrigger>
       <PopoverContent className={cn("w-auto p-0 dark", inter.className)}>
-        <Card className="w-[300px]">
+        <Card className="min-w-[300px]">
           <CardBody>
             <form
               ref={ref}

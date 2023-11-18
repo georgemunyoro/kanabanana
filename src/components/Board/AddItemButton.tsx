@@ -46,7 +46,7 @@ export const AddItemButton = ({ onAddItem }: AddItemButtonProps) => {
       onOpenChange={(open) => setIsAddingItem(open)}
     >
       <PopoverTrigger onClick={() => setIsAddingItem(true)}>
-        <Button className="flex w-80 justify-start">
+        <Button className="flex w-80 justify-start" variant="light">
           <AddToQueue size={20} />
           Add a card
         </Button>

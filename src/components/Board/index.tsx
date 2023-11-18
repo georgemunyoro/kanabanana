@@ -1,24 +1,11 @@
 import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  Divider,
-  Input,
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  cn,
 } from "@nextui-org/react";
 import { type Board as BoardModel } from "@prisma/client";
-import { AddToQueue } from "@styled-icons/boxicons-regular";
-import { Inter } from "next/font/google";
-import { useCallback, useRef, useState } from "react";
-import { type BoardData } from "./types";
+import { useCallback, useState } from "react";
 import {
   DndContext,
   type DragEndEvent,
@@ -30,6 +17,7 @@ import {
   closestCorners,
   useSensor,
   useSensors,
+  DragOverlay,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -40,96 +28,16 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { Item } from "./Item";
 import { randomBytes } from "crypto";
 import { AddListButton } from "./AddListButton";
-
-const inter = Inter({ subsets: ["latin"] });
+import { api } from "@/utils/api";
+import { type BoardData } from "./types";
 
 interface BoardProps {
-  board: Omit<BoardModel, "createdAt" | "updatedAt"> & {
+  board: Omit<BoardModel, "createdAt" | "updatedAt" | "data"> & {
+    data: BoardData;
     createdAt: string;
     updatedAt: string;
   };
 }
-
-const dummyBoardData: BoardData = {
-  columns: [
-    {
-      id: 1,
-      title: "Backlog",
-      cards: [
-        {
-          id: 1,
-          title: "Add card",
-          description: "Add capability to add a card in a column",
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "Doing",
-      cards: [
-        {
-          id: 2,
-          title: "Drag-n-drop support",
-          description: "Move a card between the columns",
-        },
-      ],
-    },
-    {
-      id: 3,
-      title: "Done",
-      cards: [
-        {
-          id: 3,
-          title: "Other stuff",
-          description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-        },
-        {
-          id: 4,
-          title: "Some other stuff",
-          description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-        },
-        {
-          id: 5,
-          title: "Some other stuff",
-          description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-        },
-      ],
-    },
-    {
-      id: 4,
-      title: "Other",
-      cards: [
-        {
-          id: 6,
-          title: "Some other stuff",
-          description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-        },
-        {
-          id: 7,
-          title: "Some other stuff",
-          description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-        },
-      ],
-    },
-    {
-      id: 5,
-      title: "Other",
-      cards: [
-        {
-          id: 8,
-          title: "Some other stuff",
-          description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-        },
-      ],
-    },
-  ],
-};
 
 type DNDType = {
   id: UniqueIdentifier;
@@ -141,23 +49,39 @@ type DNDType = {
 };
 
 export const Board = ({ board }: BoardProps) => {
-  const [boardData, setBoardData] = useState<BoardData | null>(dummyBoardData);
-
-  const [containers, setContainers] = useState<DNDType[]>([]);
+  const [containers, setContainers] = useState<DNDType[]>(
+    board.data.containers,
+  );
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
-  const [currentContainerId, setCurrentContainerId] =
-    useState<UniqueIdentifier>();
+
+  const updateBoardDataApi = api.board.update.useMutation();
+
+  const updateBoardData = useCallback(
+    (updatedContainers: typeof containers) => {
+      updateBoardDataApi.mutate({
+        id: board.id,
+        data: {
+          containers: updatedContainers,
+        },
+      });
+    },
+    [board.id, updateBoardDataApi],
+  );
 
   const onAddContainer = (containerName: string) => {
     const id = `container-${randomBytes(16).toString("hex")}`;
-    setContainers([
-      ...containers,
-      {
-        id,
-        title: containerName,
-        items: [],
-      },
-    ]);
+    setContainers((prev) => {
+      const updatedContainers = [
+        ...prev,
+        {
+          id,
+          title: containerName,
+          items: [],
+        },
+      ];
+      updateBoardData(updatedContainers);
+      return updatedContainers;
+    });
   };
 
   const onAddItem = (itemName: string, containerId: UniqueIdentifier) => {
@@ -168,6 +92,7 @@ export const Board = ({ board }: BoardProps) => {
       id,
       title: itemName,
     });
+    updateBoardData([...containers]);
     setContainers([...containers]);
   };
 
@@ -256,6 +181,7 @@ export const Board = ({ board }: BoardProps) => {
           overitemIndex,
         );
 
+        updateBoardData(newItems);
         setContainers(newItems);
       } else {
         // In different containers
@@ -269,6 +195,7 @@ export const Board = ({ board }: BoardProps) => {
           0,
           removeditem as DNDType,
         );
+        updateBoardData(newItems);
         setContainers(newItems);
       }
     }
@@ -308,6 +235,7 @@ export const Board = ({ board }: BoardProps) => {
         1,
       );
       newItems[overContainerIndex]!.items.push(removeditem as DNDType);
+      updateBoardData(newItems);
       setContainers(newItems);
     }
   };
@@ -333,6 +261,7 @@ export const Board = ({ board }: BoardProps) => {
       // Swap the active and over container
       let newItems = [...containers];
       newItems = arrayMove(newItems, activeContainerIndex, overContainerIndex);
+      updateBoardData(newItems);
       setContainers(newItems);
     }
 
@@ -373,6 +302,7 @@ export const Board = ({ board }: BoardProps) => {
           activeitemIndex,
           overitemIndex,
         );
+        updateBoardData(newItems);
         setContainers(newItems);
       } else {
         // In different containers
@@ -386,6 +316,7 @@ export const Board = ({ board }: BoardProps) => {
           0,
           removeditem as DNDType,
         );
+        updateBoardData(newItems);
         setContainers(newItems);
       }
     }
@@ -421,6 +352,7 @@ export const Board = ({ board }: BoardProps) => {
         1,
       );
       newItems[overContainerIndex]!.items.push(removeditem as DNDType);
+      updateBoardData(newItems);
       setContainers(newItems);
     }
     setActiveId(null);
@@ -438,7 +370,7 @@ export const Board = ({ board }: BoardProps) => {
           <NavbarItem></NavbarItem>
         </NavbarContent>
       </Navbar>
-      <div className="flex w-full grow gap-3 overflow-x-auto">
+      <div className="flex w-full grow gap-3 overflow-x-auto overflow-y-hidden p-5">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}
@@ -463,6 +395,21 @@ export const Board = ({ board }: BoardProps) => {
               </Container>
             ))}
           </SortableContext>
+
+          <DragOverlay adjustScale={false}>
+            {/* Drag Overlay For item Item */}
+            {activeId && activeId.toString().includes("item") && (
+              <Item id={activeId} title={findItemTitle(activeId)} />
+            )}
+            {/* Drag Overlay For Container */}
+            {activeId && activeId.toString().includes("container") && (
+              <Container id={activeId} title={findContainerTitle(activeId)}>
+                {findContainerItems(activeId).map((i) => (
+                  <Item key={i.id} title={i.title} id={i.id} />
+                ))}
+              </Container>
+            )}
+          </DragOverlay>
         </DndContext>
         <AddListButton onAddList={onAddContainer} />
       </div>
