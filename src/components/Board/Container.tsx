@@ -166,7 +166,13 @@ const ContainerTitle = ({
               <DropdownItem
                 key="update-description"
                 className="text-foreground-600"
-                onClick={() => setIsEditingDescription(true)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsEditingDescription(true);
+                  document.getElementById("edit-description")?.focus({
+                    preventScroll: true,
+                  });
+                }}
               >
                 <div className="flex items-center justify-start gap-1">
                   <Pencil size={20} />
@@ -189,17 +195,40 @@ const ContainerTitle = ({
         </div>
       </div>
       <Divider />
+
       {isEditingDescription ? (
         <Textarea
+          id="edit-description"
+          classNames={{
+            input: "edit-description",
+          }}
+          className={cn("mt-2")}
           defaultValue={description}
+          placeholder="Add a description..."
           rows={3}
+          onLoad={(e) => {
+            console.log("laoded");
+          }}
           autoFocus
           onBlur={(e) => {
+            if (
+              e.relatedTarget?.role === "menuitem" ||
+              e.relatedTarget?.role === "menu"
+            ) {
+              e.relatedTarget.blur();
+              e.target.focus();
+              e.target.click();
+              console.log(e.target);
+              return;
+            }
+            console.log(e.currentTarget, e.relatedTarget);
             setIsEditingDescription(false);
           }}
           onKeyDown={(e) => {
             if ("value" in e.target) {
               const value = e.target.value as string;
+
+              if (e.key === "Escape") setIsEditingDescription(false);
 
               // Don't lose focus on spacebar
               if (e.key === " ") {
@@ -209,7 +238,7 @@ const ContainerTitle = ({
 
               // Save on enter
               if (e.key === "Enter" && e.ctrlKey) {
-                setIsEditingTitle(false);
+                setIsEditingDescription(false);
                 if (value !== description)
                   onChangeDescription && onChangeDescription(value);
               }
