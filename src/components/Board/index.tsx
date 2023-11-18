@@ -5,7 +5,7 @@ import {
   NavbarItem,
 } from "@nextui-org/react";
 import { type Board as BoardModel } from "@prisma/client";
-import { useCallback, useState } from "react";
+import { PointerEvent, useCallback, useState } from "react";
 import {
   DndContext,
   type DragEndEvent,
@@ -18,6 +18,7 @@ import {
   useSensor,
   useSensors,
   DragOverlay,
+  PointerSensorOptions,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -42,11 +43,24 @@ interface BoardProps {
 type DNDType = {
   id: UniqueIdentifier;
   title: string;
+  description?: string;
   items: {
     id: UniqueIdentifier;
     title: string;
   }[];
 };
+
+class PointerSensorWithoutPreventDefault extends PointerSensor {
+  static activators = [
+    {
+      eventName: "onPointerDown" as const,
+      handler: ({ nativeEvent }: PointerEvent) => {
+        if (nativeEvent.button !== 0) return false;
+        return true;
+      },
+    },
+  ];
+}
 
 export const Board = ({ board }: BoardProps) => {
   const [containers, setContainers] = useState<DNDType[]>(
@@ -129,7 +143,7 @@ export const Board = ({ board }: BoardProps) => {
   };
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensorWithoutPreventDefault),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -380,19 +394,50 @@ export const Board = ({ board }: BoardProps) => {
         >
           <SortableContext items={containers.map((container) => container.id)}>
             {containers.map((container) => (
-              <Container
-                key={container.id}
-                id={container.id}
-                description=""
-                title={container.title}
-                onAddItem={onAddItem}
-              >
-                <SortableContext items={container.items.map((item) => item.id)}>
-                  {container.items.map((item) => (
-                    <Item key={item.id} id={item.id} title={item.title} />
-                  ))}
-                </SortableContext>
-              </Container>
+              <>
+                <Container
+                  key={container.id}
+                  id={container.id}
+                  description=""
+                  title={container.title}
+                  onAddItem={onAddItem}
+                  onChangeTitle={(title) => {
+                    const newItems = [...containers];
+                    const index = newItems.findIndex(
+                      (item) => item.id === container.id,
+                    );
+                    newItems[index]!.title = title;
+                    updateBoardData(newItems);
+                    setContainers(newItems);
+                  }}
+                  onChangeDescription={(description) => {
+                    const newItems = [...containers];
+                    const index = newItems.findIndex(
+                      (item) => item.id === container.id,
+                    );
+                    newItems[index]!.description = description;
+                    updateBoardData(newItems);
+                    setContainers(newItems);
+                  }}
+                  onDelete={() => {
+                    const newItems = [...containers];
+                    const index = newItems.findIndex(
+                      (item) => item.id === container.id,
+                    );
+                    newItems.splice(index, 1);
+                    updateBoardData(newItems);
+                    setContainers(newItems);
+                  }}
+                >
+                  <SortableContext
+                    items={container.items.map((item) => item.id)}
+                  >
+                    {container.items.map((item) => (
+                      <Item key={item.id} id={item.id} title={item.title} />
+                    ))}
+                  </SortableContext>
+                </Container>
+              </>
             ))}
           </SortableContext>
 

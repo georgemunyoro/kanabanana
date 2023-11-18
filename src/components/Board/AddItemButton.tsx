@@ -8,7 +8,6 @@ import {
   Card,
   CardBody,
   Divider,
-  CardFooter,
   Input,
 } from "@nextui-org/react";
 import { AddToQueue } from "@styled-icons/boxicons-regular";
@@ -60,6 +59,7 @@ export const AddItemButton = ({ onAddItem }: AddItemButtonProps) => {
                 onAddItem(data.name);
                 setIsAddingItem(false);
               })}
+              className="flex flex-col gap-3"
             >
               <Input
                 {...register("name")}
@@ -72,21 +72,25 @@ export const AddItemButton = ({ onAddItem }: AddItemButtonProps) => {
                 className="w-full"
                 minLength={1}
                 isRequired
+                onKeyDown={(e) => {
+                  if ("value" in e.target && e.key === " ") {
+                    e.preventDefault();
+                    e.target.value = (e.target.value as string) + " ";
+                  }
+                }}
               />
+              <Divider />
+              <Button
+                color="secondary"
+                variant="solid"
+                className="w-full"
+                size="sm"
+                type="submit"
+              >
+                Create
+              </Button>
             </form>
           </CardBody>
-          <Divider />
-          <CardFooter>
-            <Button
-              color="secondary"
-              variant="solid"
-              className="w-full"
-              size="sm"
-              onClick={() => ref.current?.requestSubmit()}
-            >
-              Create
-            </Button>
-          </CardFooter>
         </Card>
       </PopoverContent>
     </Popover>

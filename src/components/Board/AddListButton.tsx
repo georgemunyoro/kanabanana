@@ -65,6 +65,7 @@ export const AddListButton = ({ onAddList }: AddListButtonProps) => {
                 onAddList(data.name);
                 setIsAddingList(false);
               })}
+              className="flex flex-col gap-3"
             >
               <Input
                 {...register("name")}
@@ -78,20 +79,17 @@ export const AddListButton = ({ onAddList }: AddListButtonProps) => {
                 minLength={1}
                 isRequired
               />
+              <Divider />
+              <Button
+                color="secondary"
+                variant="solid"
+                className="w-full"
+                size="sm"
+              >
+                Create
+              </Button>
             </form>
           </CardBody>
-          <Divider />
-          <CardFooter>
-            <Button
-              color="secondary"
-              variant="solid"
-              className="w-full"
-              size="sm"
-              onClick={() => ref.current?.requestSubmit()}
-            >
-              Create
-            </Button>
-          </CardFooter>
         </Card>
       </PopoverContent>
     </Popover>
