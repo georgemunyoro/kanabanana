@@ -5,12 +5,18 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { NextUIProvider, cn } from "@nextui-org/react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
+import { dark } from "@clerk/themes";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
-    <ClerkProvider {...pageProps}>
+    <ClerkProvider
+      {...pageProps}
+      appearance={{
+        baseTheme: dark,
+      }}
+    >
       <NextUIProvider>
         <Head>
           <title>Kanabanana</title>

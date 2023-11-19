@@ -21,3 +21,8 @@
 body {
   overscroll-behavior: none;
 }
+
+.cl-userButtonPopoverRootBox,
+.cl-rootBox {
+  font-family: Inter;
+}
