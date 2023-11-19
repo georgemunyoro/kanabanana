@@ -3,7 +3,7 @@ import {
   createBoardInputSchema,
 } from "@/common/schema/board";
 import { api } from "@/utils/api";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useAuth } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Navbar as NextUINavbar,
@@ -35,14 +35,14 @@ interface NavbarProps {
 
 export const Navbar = ({ showCreateButton }: NavbarProps) => {
   const [isCreateBoardMenuOpen, setIsCreateBoardMenuOpen] = useState(false);
-
   const router = useRouter();
+  const isAuthenticated = useAuth().isSignedIn;
 
   return (
     <NextUINavbar isBordered className="h-16">
       <NavbarBrand
         className="max-w-min cursor-pointer pr-5"
-        onClick={() => router.push("/")}
+        onClick={() => router.push("/app")}
       >
         <p className="font-bold text-inherit">Kanabanana</p>
       </NavbarBrand>
@@ -69,9 +69,11 @@ export const Navbar = ({ showCreateButton }: NavbarProps) => {
         )}
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem>
-          <UserButton />
-        </NavbarItem>
+        {isAuthenticated && (
+          <NavbarItem>
+            <UserButton />
+          </NavbarItem>
+        )}
       </NavbarContent>
     </NextUINavbar>
   );
@@ -92,7 +94,7 @@ const CreateBoardForm = ({ onClose }: CreateBoardFormProps) => {
   const router = useRouter();
 
   const createBoard = api.board.create.useMutation({
-    onSuccess: (data) => void router.push(`/board/${data.id}`),
+    onSuccess: (data) => void router.push(`/app/board/${data.id}`),
     onError: (error) => {
       console.error(error);
       onClose();

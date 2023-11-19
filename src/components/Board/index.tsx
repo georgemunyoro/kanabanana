@@ -24,6 +24,7 @@ import { AddListButton } from "./AddListButton";
 import { type BoardData } from "./types";
 import { useBoard } from "./useBoard";
 import { PointerSensorWithoutPreventDefault } from "./PointerSensorWithoutPreventDefault";
+import { motion } from "framer-motion";
 
 export interface BoardProps {
   board: Omit<BoardModel, "createdAt" | "updatedAt" | "data"> & {
@@ -136,32 +137,34 @@ export const Board = ({ board }: BoardProps) => {
             ))}
           </SortableContext>
 
-          <DragOverlay adjustScale={false}>
-            {/* Drag Overlay For item Item */}
-            {activeId && activeId.toString().includes("card") && (
-              <Item
-                id={activeId}
-                title={getCardTitle(activeId)}
-                description={getCardDescription(activeId)}
-              />
-            )}
-            {/* Drag Overlay For Container */}
-            {activeId && activeId.toString().includes("list") && (
-              <Container
-                id={activeId}
-                title={getListTitle(activeId)}
-                description={getListDescription(activeId)}
-              >
-                {getListItems(activeId).map((i) => (
-                  <Item
-                    key={i.id}
-                    id={i.id}
-                    title={i.title}
-                    description={i.description}
-                  />
-                ))}
-              </Container>
-            )}
+          <DragOverlay adjustScale={false} zIndex={100}>
+            <motion.div animate={{rotate: 5, speed: 1000}}>
+              {/* Drag Overlay For item Item */}
+              {activeId && activeId.toString().includes("card") && (
+                <Item
+                  id={activeId}
+                  title={getCardTitle(activeId)}
+                  description={getCardDescription(activeId)}
+                />
+              )}
+              {/* Drag Overlay For Container */}
+              {activeId && activeId.toString().includes("list") && (
+                <Container
+                  id={activeId}
+                  title={getListTitle(activeId)}
+                  description={getListDescription(activeId)}
+                >
+                  {getListItems(activeId).map((i) => (
+                    <Item
+                      key={i.id}
+                      id={i.id}
+                      title={i.title}
+                      description={i.description}
+                    />
+                  ))}
+                </Container>
+              )}
+            </motion.div>
           </DragOverlay>
         </DndContext>
         <AddListButton onAddList={addList} />
