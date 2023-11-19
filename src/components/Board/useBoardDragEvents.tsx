@@ -232,7 +232,7 @@ export const useBoardDragEvents = (
           activeitemIndex,
           1,
         );
-        draftState[overContainerIndex]!.items.push(removeditem as DNDType);
+        draftState[overContainerIndex]!.items.push(removeditem!);
       });
       updateLists(newItems);
     }

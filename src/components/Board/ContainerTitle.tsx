@@ -46,9 +46,7 @@ export const ContainerTitle = ({
             className="bg-silver -mt-1 h-[32px] rounded-md py-3 pt-4 text-medium outline-none"
             defaultValue={title}
             autoFocus
-            onBlur={(e) => {
-              setIsEditingTitle(false);
-            }}
+            onBlur={() => setIsEditingTitle(false)}
             onKeyDown={(e) => {
               if ("value" in e.target) {
                 const value = e.target.value as string;
@@ -131,16 +129,20 @@ export const ContainerTitle = ({
           autoFocus
           onBlur={(e) => {
             if (
-              e.relatedTarget?.role === "menuitem" ||
-              e.relatedTarget?.role === "menu"
+              e.relatedTarget &&
+              e.target &&
+              (e.relatedTarget?.role === "menuitem" ||
+                e.relatedTarget?.role === "menu")
             ) {
-              e.relatedTarget.blur();
-              e.target.focus();
-              e.target.click();
+              (e.relatedTarget as HTMLElement).blur();
+              (e.target as HTMLElement).focus();
+              (e.target as HTMLElement).click();
               return;
             }
-            if (e.target.value !== description && e.target.value.length > 0)
-              onChangeDescription && onChangeDescription(e.target.value);
+            if ("value" in e.target) {
+              if (e.target.value !== description && e.target.value.length > 0)
+                onChangeDescription && onChangeDescription(e.target.value);
+            }
             setIsEditingDescription(false);
           }}
           onKeyDown={(e) => {

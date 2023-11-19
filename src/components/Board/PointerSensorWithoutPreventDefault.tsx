@@ -6,7 +6,11 @@ export class PointerSensorWithoutPreventDefault extends PointerSensor {
     {
       eventName: "onPointerDown" as const,
       handler: ({ nativeEvent }: PointerEvent) => {
-        const isEditDescription = nativeEvent.target.classList.contains("edit-description");
+        if (!nativeEvent) return true;
+
+        const isEditDescription = (
+          nativeEvent.target as HTMLElement
+        ).classList.contains("edit-description");
 
         if (nativeEvent.button !== 0 || isEditDescription) return false;
         return true;

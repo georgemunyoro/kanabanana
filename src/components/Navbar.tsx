@@ -19,7 +19,6 @@ import {
   CardBody,
   cn,
   CardFooter,
-  CardHeader,
   Divider,
 } from "@nextui-org/react";
 import { Inter } from "next/font/google";
