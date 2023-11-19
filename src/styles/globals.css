@@ -17,3 +17,7 @@
 *::-webkit-scrollbar-thumb:hover {
   background-color: #333333;
 }
+
+body {
+  overscroll-behavior: none;
+}

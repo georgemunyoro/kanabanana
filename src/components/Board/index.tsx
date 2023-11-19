@@ -30,7 +30,8 @@ import { Item } from "./Item";
 import { randomBytes } from "crypto";
 import { AddListButton } from "./AddListButton";
 import { api } from "@/utils/api";
-import { type BoardData } from "./types";
+import { BoardCard, BoardList, type BoardData } from "./types";
+import { produce } from "immer";
 
 interface BoardProps {
   board: Omit<BoardModel, "createdAt" | "updatedAt" | "data"> & {
@@ -44,10 +45,7 @@ type DNDType = {
   id: UniqueIdentifier;
   title: string;
   description?: string;
-  items: {
-    id: UniqueIdentifier;
-    title: string;
-  }[];
+  items: BoardCard[];
 };
 
 class PointerSensorWithoutPreventDefault extends PointerSensor {
@@ -66,10 +64,10 @@ class PointerSensorWithoutPreventDefault extends PointerSensor {
 }
 
 export const Board = ({ board }: BoardProps) => {
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [containers, setContainers] = useState<DNDType[]>(
     board.data.containers,
   );
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
   const updateBoardDataApi = api.board.update.useMutation();
 
@@ -103,7 +101,7 @@ export const Board = ({ board }: BoardProps) => {
 
   const onAddItem = (itemName: string, containerId: UniqueIdentifier) => {
     const id = `item-${randomBytes(16).toString("hex")}`;
-    const container = containers.find((item) => item.id === containerId);
+    const container = { ...containers.find((item) => item.id === containerId) };
     if (!container) return;
     container.items.push({
       id,
@@ -114,16 +112,19 @@ export const Board = ({ board }: BoardProps) => {
   };
 
   // Find the value of the items
-  function findValueOfItems(id: UniqueIdentifier | undefined, type: string) {
-    if (type === "container") {
-      return containers.find((item) => item.id === id);
-    }
-    if (type === "item") {
-      return containers.find((container) =>
-        container.items.find((item) => item.id === id),
-      );
-    }
-  }
+  const findValueOfItems = useCallback(
+    (id: UniqueIdentifier | undefined, type: string) => {
+      if (type === "container") {
+        return containers.find((item) => item.id === id);
+      }
+      if (type === "item") {
+        return containers.find((container) =>
+          container.items.find((item) => item.id === id),
+        );
+      }
+    },
+    [containers],
+  );
 
   const findItemTitle = (id: UniqueIdentifier | undefined) => {
     const container = findValueOfItems(id, "item");
@@ -133,10 +134,24 @@ export const Board = ({ board }: BoardProps) => {
     return item.title;
   };
 
+  const findItemDescription = (id: UniqueIdentifier | undefined) => {
+    const container = findValueOfItems(id, "item");
+    if (!container) return "";
+    const item = container.items.find((item) => item.id === id);
+    if (!item) return "";
+    return item.description;
+  };
+
   const findContainerTitle = (id: UniqueIdentifier | undefined) => {
     const container = findValueOfItems(id, "container");
     if (!container) return "";
     return container.title;
+  };
+
+  const findContainerDescription = (id: UniqueIdentifier | undefined) => {
+    const container = findValueOfItems(id, "container");
+    if (!container) return "";
+    return container.description;
   };
 
   const findContainerItems = (id: UniqueIdentifier | undefined) => {
@@ -375,6 +390,68 @@ export const Board = ({ board }: BoardProps) => {
     setActiveId(null);
   };
 
+  const updateItem = useCallback(
+    (updatedItem: BoardCard, container: BoardList) => {
+      const updatedState = produce(containers, (draftState) => {
+        const containerIndex = draftState.findIndex(
+          (c) => c.id === container.id,
+        );
+        if (containerIndex === -1) return; // Exit if container not found
+
+        const itemIndex = draftState[containerIndex]!.items.findIndex(
+          (i) => i.id === updatedItem.id,
+        );
+        if (itemIndex === -1) return; // Exit if item not found
+
+        console.log(
+          "Current Description:",
+          draftState[containerIndex].items[itemIndex].description,
+        );
+        console.log("New Description:", updatedItem.description);
+
+        draftState[containerIndex]!.items[itemIndex]!.description =
+          "other thing";
+      });
+      console.log(
+        containers
+          .find((c) => c.id === container.id)
+          ?.items.find((i) => i.id === updatedItem.id)?.description,
+      );
+      setContainers(updatedState);
+    },
+    [containers],
+  );
+
+  const onChangeContainerTitle = (
+    title: string,
+    containerId: UniqueIdentifier,
+  ) => {
+    const newItems = [...containers];
+    const index = newItems.findIndex((item) => item.id === containerId);
+    newItems[index]!.title = title;
+    updateBoardData(newItems);
+    setContainers(newItems);
+  };
+
+  const onChangeContainerDescription = (
+    description: string,
+    containerId: UniqueIdentifier,
+  ) => {
+    const newItems = [...containers];
+    const index = newItems.findIndex((item) => item.id === containerId);
+    newItems[index]!.description = description;
+    updateBoardData(newItems);
+    setContainers(newItems);
+  };
+
+  const onDeleteContainer = (containerId: UniqueIdentifier) => {
+    const newItems = [...containers];
+    const index = newItems.findIndex((item) => item.id === containerId);
+    newItems.splice(index, 1);
+    updateBoardData(newItems);
+    setContainers(newItems);
+  };
+
   return (
     <div className="flex grow flex-col gap-3">
       <Navbar isBordered className="h-14">
@@ -397,63 +474,91 @@ export const Board = ({ board }: BoardProps) => {
         >
           <SortableContext items={containers.map((container) => container.id)}>
             {containers.map((container) => (
-              <>
-                <Container
-                  key={container.id}
-                  id={container.id}
-                  description=""
-                  title={container.title}
-                  onAddItem={onAddItem}
-                  onChangeTitle={(title) => {
-                    const newItems = [...containers];
-                    const index = newItems.findIndex(
-                      (item) => item.id === container.id,
-                    );
-                    newItems[index]!.title = title;
-                    updateBoardData(newItems);
-                    setContainers(newItems);
-                  }}
-                  onChangeDescription={(description) => {
-                    const newItems = [...containers];
-                    const index = newItems.findIndex(
-                      (item) => item.id === container.id,
-                    );
-                    newItems[index]!.description = description;
-                    updateBoardData(newItems);
-                    setContainers(newItems);
-                  }}
-                  onDelete={() => {
-                    const newItems = [...containers];
-                    const index = newItems.findIndex(
-                      (item) => item.id === container.id,
-                    );
-                    newItems.splice(index, 1);
-                    updateBoardData(newItems);
-                    setContainers(newItems);
-                  }}
-                >
-                  <SortableContext
-                    items={container.items.map((item) => item.id)}
-                  >
-                    {container.items.map((item) => (
-                      <Item key={item.id} id={item.id} title={item.title} />
-                    ))}
-                  </SortableContext>
-                </Container>
-              </>
+              <Container
+                key={container.id}
+                id={container.id}
+                title={container.title}
+                description={container.description}
+                onAddItem={onAddItem}
+                onChangeTitle={(updatedTitle) =>
+                  onChangeContainerTitle(updatedTitle, container.id)
+                }
+                onChangeDescription={(updatedDescription) =>
+                  onChangeContainerDescription(updatedDescription, container.id)
+                }
+                onDelete={() => onDeleteContainer(container.id)}
+              >
+                <SortableContext items={container.items.map((item) => item.id)}>
+                  {container.items.map((item) => (
+                    <Item
+                      key={item.id}
+                      id={item.id}
+                      title={item.title}
+                      description={item.description}
+                      onUpdateCard={(updatedItem) => {
+                        const updatedState = produce(
+                          containers,
+                          (draftState) => {
+                            const containerIndex = draftState.findIndex(
+                              (c) => c.id === container.id,
+                            );
+                            if (containerIndex === -1) return;
+                            const itemIndex = draftState[
+                              containerIndex
+                            ]!.items.findIndex((i) => i.id === updatedItem.id);
+                            if (itemIndex === -1) return;
+                            draftState[containerIndex]!.items[itemIndex] = {
+                              ...updatedItem,
+                            };
+                          },
+                        );
+                        updateBoardData(updatedState);
+                        setContainers(updatedState);
+                      }}
+                      onDelete={() => {
+                        const items = container.items.filter(
+                          (i) => i.id !== item.id,
+                        );
+                        const updatedContainer = {
+                          ...container,
+                          items,
+                        };
+                        const updatedContainers = containers.map((c) =>
+                          c.id === container.id ? updatedContainer : c,
+                        );
+                        updateBoardData(updatedContainers);
+                        setContainers(updatedContainers);
+                      }}
+                    />
+                  ))}
+                </SortableContext>
+              </Container>
             ))}
           </SortableContext>
 
           <DragOverlay adjustScale={false}>
             {/* Drag Overlay For item Item */}
             {activeId && activeId.toString().includes("item") && (
-              <Item id={activeId} title={findItemTitle(activeId)} />
+              <Item
+                id={activeId}
+                title={findItemTitle(activeId)}
+                description={findItemDescription(activeId)}
+              />
             )}
             {/* Drag Overlay For Container */}
             {activeId && activeId.toString().includes("container") && (
-              <Container id={activeId} title={findContainerTitle(activeId)}>
+              <Container
+                id={activeId}
+                title={findContainerTitle(activeId)}
+                description={findContainerDescription(activeId)}
+              >
                 {findContainerItems(activeId).map((i) => (
-                  <Item key={i.id} title={i.title} id={i.id} />
+                  <Item
+                    key={i.id}
+                    id={i.id}
+                    title={i.title}
+                    description={i.description}
+                  />
                 ))}
               </Container>
             )}

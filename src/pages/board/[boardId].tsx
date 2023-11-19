@@ -56,7 +56,7 @@ export const getServerSideProps: GetServerSideProps<BoardPageProps> = async ({
         ...{
           ...board,
           data: JSON.parse(
-            typeof board.data == "string" ? board.data : "{}",
+            typeof board.data == "string" ? board.data : '{"containers":[]}',
           ) as BoardData,
         },
         createdAt: board?.createdAt?.toISOString() ?? "",

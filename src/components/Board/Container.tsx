@@ -18,11 +18,14 @@ import {
 import {
   DotsHorizontal,
   DotsVertical,
+  DotsVerticalRounded,
   Menu,
   Trash,
 } from "@styled-icons/boxicons-regular";
 import { Inter } from "next/font/google";
 import { Pencil } from "@styled-icons/boxicons-solid";
+import { DragHandle } from "./DragHandle";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 
 interface ContainerProps {
   id: UniqueIdentifier;
@@ -62,7 +65,7 @@ const Container = ({
   return (
     <div
       {...attributes}
-      {...listeners}
+      // {...listeners}
       ref={setNodeRef}
       style={{
         transition,
@@ -74,13 +77,16 @@ const Container = ({
       )}
     >
       <div className="flex w-full items-center justify-between rounded-t-lg border-[1px] border-foreground-50 bg-black">
-        <ContainerTitle
-          title={title}
-          description={description}
-          onChangeTitle={onChangeTitle}
-          onChangeDescription={onChangeDescription}
-          onDelete={onDelete}
-        />
+        <div className="flex w-full items-center p-2">
+          <ContainerTitle
+            title={title}
+            description={description}
+            onChangeTitle={onChangeTitle}
+            onChangeDescription={onChangeDescription}
+            onDelete={onDelete}
+            listeners={listeners}
+          />
+        </div>
       </div>
       <div className="flex max-h-[calc(100vh-350px)] min-h-[60px] overflow-y-auto border-x-[1px] border-foreground-50 bg-black">
         <div className="flex w-full flex-col gap-2 p-2">{children}</div>
@@ -104,9 +110,11 @@ interface ContainerTitleProps {
   onChangeTitle?: (title: string) => void;
   onChangeDescription?: (description: string) => void;
   onDelete?: () => void;
+  listeners?: SyntheticListenerMap;
 }
 
 const ContainerTitle = ({
+  listeners,
   title,
   description,
   onDelete,
@@ -117,11 +125,12 @@ const ContainerTitle = ({
   const [isEditingDescription, setIsEditingDescription] = useState(false);
 
   return (
-    <div className="flex w-full flex-col gap-y-1 p-3">
+    <div className="flex w-full flex-col gap-y-1 p-3 pt-0">
       <div className={cn("flex h-full items-center justify-between gap-2")}>
+        <DragHandle className="self-baseline pt-[6px]" listeners={listeners} />
         {isEditingTitle ? (
           <input
-            className="bg-silver -mt-1 h-[32px] rounded-md p-3 pt-4 text-medium outline-none"
+            className="bg-silver -mt-1 h-[32px] rounded-md py-3 pt-4 text-medium outline-none"
             defaultValue={title}
             autoFocus
             onBlur={(e) => {
@@ -148,7 +157,7 @@ const ContainerTitle = ({
           />
         ) : (
           <Button
-            className="w-full justify-start bg-transparent text-medium"
+            className="w-full justify-start bg-transparent p-0 text-medium"
             size="sm"
             onClick={() => setIsEditingTitle(true)}
           >
@@ -221,7 +230,8 @@ const ContainerTitle = ({
               console.log(e.target);
               return;
             }
-            console.log(e.currentTarget, e.relatedTarget);
+            if (e.target.value !== description && e.target.value.length > 0)
+              onChangeDescription && onChangeDescription(e.target.value);
             setIsEditingDescription(false);
           }}
           onKeyDown={(e) => {
@@ -246,7 +256,7 @@ const ContainerTitle = ({
           }}
         />
       ) : (
-        <p className="text-sm text-foreground-500">{description}</p>
+        <p className="pb-0 pt-2 text-sm text-foreground-500">{description}</p>
       )}
     </div>
   );

@@ -54,7 +54,7 @@ export const boardRouter = createTRPCRouter({
         id: board.id,
         name: board.name,
         data: JSON.parse(
-          typeof board.data === "string" ? board.data : "{}",
+          typeof board.data === "string" ? board.data : '{"containers":[]}',
         ) as BoardData,
       };
     }),
