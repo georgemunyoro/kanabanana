@@ -6,12 +6,12 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Divider,
-  Image,
+  ScrollShadow,
   tv,
 } from "@nextui-org/react";
+import { Github } from "@styled-icons/boxicons-logos";
 import {
-  AddToQueue,
+  Envelope,
   Move,
   Rocket,
   User,
@@ -19,7 +19,7 @@ import {
 } from "@styled-icons/boxicons-regular";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 const styles = tv({
   slots: {
@@ -30,159 +30,97 @@ const styles = tv({
     iconWrapper:
       "flex justify-center p-2 rounded-full items-center bg-secondary-100/80 text-pink-500",
     title: "text-base font-semibold",
-    description: "font-normal text-base text-default-500",
+    description: "font-normal text-sm text-default-500",
   },
 });
 
 const Home = () => {
   return (
-    <div className="home-gradient">
+    <div className="home-gradient h-full overflow-hidden">
       <Navbar />
-      <div className="flex flex-col items-center py-10">
-        <div className="h-[300px]">
-          <AnimatedDemo />
-        </div>
-
-        <div className="shadow-tt z-10 w-full rounded-t-[100%] bg-purple-800 pt-2 shadow-black">
-          <div className="shadow-tt z-[60] flex h-96 w-full flex-col gap-10 rounded-t-[100%] bg-purple-900 pt-20 text-center shadow-black">
-            <div className="text-4xl font-bold">
-              <div>Get stuff done</div>
-              <div>
-                with kana<span className="text-yellow-500">banana</span>
-              </div>
-            </div>
-            <div className="-mt-8">
-              <p className="text-lg">
-                Organize Effortlessly, Anytime, Anywhere
-              </p>
-            </div>
-            <div className="flex justify-center gap-2">
-              <Link href="/app">
-                <Button
-                  href="/app"
-                  size="lg"
-                  className="w-fit"
-                  variant="solid"
-                  color="primary"
-                >
-                  <Rocket size={20} />
-                  Get Started
-                </Button>
-              </Link>
-              <Link href="/app">
-                <Button
-                  href="/app"
-                  size="lg"
-                  className="w-fit"
-                  variant="flat"
-                  color="success"
-                >
-                  <User size={20} />
-                  Sign In
-                </Button>
-              </Link>
-            </div>
-            <div className="flex w-full max-w-[1280px] flex-col bg-slate-950 pb-10 pt-32 md:flex-row md:gap-8">
-              <div className="h-fit w-full grow p-4 md:w-min">
-                <FeatureCard
-                  icon={<Move size={20} />}
-                  title="Drag-and-Drop Simplicity"
-                  description="Easily organize your tasks with a simple drag-and-drop interface. Managing your to-do list has never been more intuitive."
-                />
-              </div>
-              <div className="h-fit w-full grow p-4 md:w-min">
-                <FeatureCard
-                  icon={<User size={20} />}
-                  title="Your Workspace, Your Way"
-                  description="Customize boards and columns to fit the unique flow of your projects. Create a space that truly reflects how you work."
-                />
-              </div>
-              <div className="h-fit w-full grow p-4 md:w-min">
-                <FeatureCard
-                  icon={<WifiOff size={20} />}
-                  title="Work Offline, Stay Updated"
-                  description="Continue managing your tasks even without internet access. Sync up later when you're back online"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="home-gradient h-screen w-screen overflow-y-scroll">
-      <Navbar />
-      <div className="flex w-full flex-col items-center justify-center gap-20 lg:h-1/2 lg:flex-row">
-        <div className="flex h-full flex-col items-end justify-center px-4 py-10 lg:w-1/2">
-          <div className="flex flex-col gap-3 md:mt-52">
-            <div className="text-4xl font-bold md:text-4xl lg:text-6xl">
-              <div className="flex">
+      <ScrollShadow className="h-full">
+        <div className="flex h-full flex-col items-center px-4 py-10">
+          <div className="flex flex-col items-center justify-center gap-4 pt-10 shadow-black sm:p-10 md:flex-row lg:gap-24">
+            <div className="w-min md:w-fit">
+              <div className="fold:text-center text-left text-4xl font-bold md:text-left md:text-5xl lg:text-6xl">
                 Get stuff done
-                <div className="animate-wiggle px-2">✅</div>
+                <div>
+                  with kana<span className="text-yellow-500">banana</span>
+                </div>
               </div>
-              with kana<span className="text-yellow-500">banana</span>
+              <div className="fold:text-center text-left md:text-left">
+                Organize Effortlessly, Anytime, Anywhere
+              </div>
+              <div className="flex w-full justify-start pt-8">
+                <div className="fold:flex-row fold:justify-center fold:w-full flex flex-col items-start gap-2 md:items-start md:justify-start">
+                  <Link href="/app">
+                    <Button
+                      href="/app"
+                      size="lg"
+                      className="w-fit"
+                      variant="solid"
+                      color="primary"
+                    >
+                      <Rocket size={20} />
+                      Get Started
+                    </Button>
+                  </Link>
+                  <Link href="/app">
+                    <Button
+                      href="/app"
+                      size="lg"
+                      className="w-fit"
+                      variant="flat"
+                      color="success"
+                    >
+                      <User size={20} />
+                      Sign In
+                    </Button>
+                  </Link>
+                </div>
+              </div>
             </div>
-            <p className="text-lg">Organize Effortlessly, Anytime, Anywhere</p>
-
-            <div className="flex gap-2">
-              <Link href="/app">
-                <Button
-                  href="/app"
-                  size="lg"
-                  className="w-fit"
-                  variant="solid"
-                  color="primary"
-                >
-                  <Rocket size={20} />
-                  Get Started
-                </Button>
-              </Link>
-              <Link href="/app">
-                <Button
-                  href="/app"
-                  size="lg"
-                  className="w-fit"
-                  variant="flat"
-                  color="success"
-                >
-                  <User size={20} />
-                  Sign In
-                </Button>
-              </Link>
+            <div className="fold:scale-75 h-[500px] scale-[60%] lg:scale-90">
+              <AnimatedDemo />
             </div>
           </div>
-        </div>
-        <div className="-mt-20 flex h-full grow scale-50 items-center md:scale-75 lg:scale-100">
-          <AnimatedDemo />
-        </div>
-      </div>
-      <div className="flex justify-center">
-        <div className="flex w-full max-w-[1280px] flex-col pt-32 md:flex-row md:gap-8">
-          <div className="h-fit w-full grow p-4 md:w-min">
-            <FeatureCard
-              icon={<Move size={20} />}
-              title="Drag-and-Drop Simplicity"
-              description="Easily organize your tasks with a simple drag-and-drop interface. Managing your to-do list has never been more intuitive."
-            />
+          <div className="flex grow flex-col pb-48 pt-10 md:w-full md:flex-row lg:max-w-[1000px]">
+            <motion.div className="h-fit w-full grow p-4 md:w-min">
+              <FeatureCard
+                icon={<Move size={20} />}
+                title="Drag-and-Drop Simplicity"
+                description="Easily organize your tasks with a simple drag-and-drop interface. Managing your to-do list has never been more intuitive."
+              />
+            </motion.div>
+            <motion.div className="h-fit w-full grow p-4 md:w-min">
+              <FeatureCard
+                icon={<User size={20} />}
+                title="Your Workspace, Your Way"
+                description="Customize boards and columns to fit the unique flow of your projects. Create a space that truly reflects how you work."
+              />
+            </motion.div>
+            <div className="h-fit w-full grow p-4 md:w-min">
+              <FeatureCard
+                icon={<WifiOff size={20} />}
+                title="Work Offline, Stay Updated"
+                description="Continue managing your tasks even without internet access. Sync up later when you're back online"
+              />
+            </div>
           </div>
-          <div className="h-fit w-full grow p-4 md:w-min">
-            <FeatureCard
-              icon={<User size={20} />}
-              title="Your Workspace, Your Way"
-              description="Customize boards and columns to fit the unique flow of your projects. Create a space that truly reflects how you work."
-            />
-          </div>
-          <div className="h-fit w-full grow p-4 md:w-min">
-            <FeatureCard
-              icon={<WifiOff size={20} />}
-              title="Work Offline, Stay Updated"
-              description="Continue managing your tasks even without internet access. Sync up later when you're back online"
-            />
+          <div className="flex w-full items-center justify-center self-end border-t-1 border-gray-800 bg-black p-4 pb-20">
+            <Link href="https://github.com/georgemunyoro/kanabanana">
+              <Button variant="ghost" className="border-0">
+                <Github size={20} />
+              </Button>
+            </Link>
+            <Link href="mailto:george@munyoro.com">
+              <Button variant="ghost" className="border-0">
+                <Envelope size={20} />
+              </Button>
+            </Link>
           </div>
         </div>
-      </div>
+      </ScrollShadow>
     </div>
   );
 };
@@ -198,7 +136,7 @@ const FeatureCard = ({
 }) => {
   const slots = styles();
   return (
-    <Card isBlurred className={slots.card()}>
+    <Card isBlurred className={slots.card() + " hover:scale-105"}>
       <CardHeader className={slots.header()}>
         <div className={slots.iconWrapper()}>{icon}</div>
         <p className={slots.title()}>{title}</p>
@@ -211,16 +149,9 @@ const FeatureCard = ({
 };
 
 const AnimatedDemo = () => {
-  const delay = 1;
-  const stiffness = 100;
-  const duration = 0.5;
-  const repeatType = "loop";
-  const repeat = Infinity;
-  const repeatDelay = 1;
-
   return (
-    <div className="pointer-events-none -mt-20 w-full scale-75">
-      <div className="relative -left-4 shadow-2xl shadow-black">
+    <div className="pointer-events-none -mt-10 flex w-full flex-col items-center">
+      <div className="relative -left-4 w-min shadow-2xl shadow-black">
         <Container
           id={"test"}
           title={"Done"}
@@ -234,55 +165,20 @@ const AnimatedDemo = () => {
           />
         </Container>
       </div>
-      <div className="relative -top-40 left-3 z-50 shadow-2xl shadow-black">
+      <div className="relative -top-40 left-3 z-50 w-min shadow-2xl shadow-black">
         <Container
           id={"test"}
           title={"Todo"}
           description={"Tasks that are yet to go into development"}
         >
-          <motion.div className="opacity-">
-            <Item
-              key={"test-1"}
-              id={"test-1"}
-              title={"Lorem ipsum dolor sit amet"}
-              description={
-                "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-              }
-            />
-          </motion.div>
-          <motion.div>
-            <Item
-              key={"test-0"}
-              id={"test-0"}
-              title={"Sign up for kanabanana"}
-              description={
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-              }
-            />
-          </motion.div>
-        </Container>
-      </div>
-      {/* <motion.div
-        className="relative -left-[97.5%] top-[226%] z-50"
-        animate={{
-          // x: [0, 20, 0],
-          y: [0, -122, 0],
-          // rotate: [0, 5, 0],
-          boxShadow: [
-            "var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)",
-            "none",
-          ],
-        }}
-        transition={{
-          type: "spring",
-          stiffness,
-          duration: 10,
-          repeatType,
-          repeat,
-          repeatDelay,
-        }}
-      >
-        <div>
+          <Item
+            key={"test-1"}
+            id={"test-1"}
+            title={"Lorem ipsum dolor sit amet"}
+            description={
+              "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            }
+          />
           <Item
             key={"test-0"}
             id={"test-0"}
@@ -291,8 +187,8 @@ const AnimatedDemo = () => {
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             }
           />
-        </div>
-      </motion.div> */}
+        </Container>
+      </div>
     </div>
   );
 };

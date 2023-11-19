@@ -1,6 +1,7 @@
 import { nextui } from "@nextui-org/react";
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 export default {
   content: [
@@ -8,6 +9,11 @@ export default {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    screens: {
+      fold: "350px", // For Galaxy Fold screens
+      ...defaultTheme.screens,
+    },
+
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
