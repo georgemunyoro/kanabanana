@@ -21,16 +21,14 @@ import {
 import { DragHandle } from "./DragHandle";
 import { Inter } from "next/font/google";
 import { Trash } from "@styled-icons/boxicons-regular";
-import { BoardCard } from "./types";
+import { type BoardCard } from "./types";
 
 type ItemProps = {
   id: UniqueIdentifier;
   title: string;
   description?: string;
-  onUpdateTitle?: (updatedTitle: string) => void;
-  onUpdateDescription?: (updatedDescription: string) => void;
-  onDelete?: () => void;
   onUpdateCard?: (updatedCard: BoardCard) => void;
+  onDelete?: () => void;
 };
 
 const inter = Inter({ subsets: ["latin"] });
@@ -39,10 +37,8 @@ export const Item = ({
   id,
   title,
   description,
-  onUpdateDescription,
-  onUpdateTitle,
-  onDelete,
   onUpdateCard,
+  onDelete,
 }: ItemProps) => {
   const {
     attributes,
@@ -102,7 +98,7 @@ export const Item = ({
         }}
       >
         <ModalContent>
-          {(onClose) => (
+          {() => (
             <>
               <ModalHeader className="flex flex-col gap-1"></ModalHeader>
               <ModalBody className="pb-10">

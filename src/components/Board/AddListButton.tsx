@@ -8,7 +8,6 @@ import {
   Card,
   CardBody,
   Divider,
-  CardFooter,
   Input,
 } from "@nextui-org/react";
 import { AddToQueue } from "@styled-icons/boxicons-regular";

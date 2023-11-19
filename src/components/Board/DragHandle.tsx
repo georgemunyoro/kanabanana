@@ -1,5 +1,5 @@
-import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
-import { Button, cn } from "@nextui-org/react";
+import { type SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import { cn } from "@nextui-org/react";
 import { DotsVerticalRounded } from "@styled-icons/boxicons-regular";
 
 interface DragHandleProps {
