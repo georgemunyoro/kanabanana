@@ -167,7 +167,9 @@ export const ContainerTitle = ({
           }}
         />
       ) : (
-        <p className="pb-0 pt-2 text-sm text-foreground-500">{description}</p>
+        <p className="w-72 pb-0 pt-2 text-sm text-foreground-500">
+          {description}
+        </p>
       )}
     </div>
   );
