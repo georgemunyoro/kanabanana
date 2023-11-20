@@ -45,3 +45,17 @@ html {
   overflow-x: hidden;
   background-color: black !important;
 }
+
+.list-description-input[contenteditable]:empty::before {
+  content: "+ Click to add a description";
+  color: #444;
+}
+
+.list-description-input[contenteditable]:empty:hover::before {
+  content: "+ Click to add a description";
+  color: #aaa;
+}
+
+.list-description-input[contenteditable]:empty:focus::before {
+  content: "";
+}

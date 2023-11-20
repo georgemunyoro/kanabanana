@@ -24,7 +24,6 @@ import { AddListButton } from "./AddListButton";
 import { type BoardData } from "./types";
 import { useBoard } from "./useBoard";
 import { PointerSensorWithoutPreventDefault } from "./PointerSensorWithoutPreventDefault";
-import { motion } from "framer-motion";
 
 export interface BoardProps {
   board: Omit<BoardModel, "createdAt" | "updatedAt" | "data"> & {
@@ -138,7 +137,7 @@ export const Board = ({ board }: BoardProps) => {
           </SortableContext>
 
           <DragOverlay adjustScale={false} zIndex={100}>
-            <motion.div animate={{ rotate: 5, speed: 1000 }}>
+            <div>
               {/* Drag Overlay For item Item */}
               {activeId && activeId.toString().includes("card") && (
                 <Item
@@ -164,7 +163,7 @@ export const Board = ({ board }: BoardProps) => {
                   ))}
                 </Container>
               )}
-            </motion.div>
+            </div>
           </DragOverlay>
         </DndContext>
         <AddListButton onAddList={addList} />
