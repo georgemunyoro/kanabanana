@@ -40,3 +40,8 @@ body {
 .shadow-tt {
   box-shadow: 0px -5px 15px -3px rgb(24, 24, 24);
 }
+
+html {
+  overflow-x: hidden;
+  background-color: black !important;
+}
