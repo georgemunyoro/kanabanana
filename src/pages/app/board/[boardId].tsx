@@ -18,7 +18,7 @@ export default function BoardPage({ board }: BoardPageProps) {
   if (!board) return null;
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex h-screen w-full flex-col">
       <Navbar />
       <Board board={board} />
     </div>

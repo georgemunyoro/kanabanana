@@ -66,7 +66,7 @@ export const Board = ({ board }: BoardProps) => {
   const [isEditingBoardName, setIsEditingBoardName] = useState(false);
 
   return (
-    <div className="flex grow flex-col gap-3">
+    <div className="grow overflow-hidden">
       <Navbar isBordered className="h-14">
         <NavbarContent className="h-10">
           <NavbarBrand className="pr-5">
@@ -138,7 +138,7 @@ export const Board = ({ board }: BoardProps) => {
           </SortableContext>
 
           <DragOverlay adjustScale={false} zIndex={100}>
-            <motion.div animate={{rotate: 5, speed: 1000}}>
+            <motion.div animate={{ rotate: 5, speed: 1000 }}>
               {/* Drag Overlay For item Item */}
               {activeId && activeId.toString().includes("card") && (
                 <Item
