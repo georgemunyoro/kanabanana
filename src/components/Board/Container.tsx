@@ -51,7 +51,7 @@ const Container = ({
         transform: CSS.Translate.toString(transform),
       }}
       className={cn(
-        "flex max-h-[calc(100vh-177px)] flex-col rounded-lg outline-none",
+        "flex max-h-[calc(100vh-170px)] flex-col rounded-lg outline-none",
         isDragging && "opacity-50",
       )}
     >
