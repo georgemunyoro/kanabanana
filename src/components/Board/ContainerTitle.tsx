@@ -75,7 +75,6 @@ export const ContainerTitle = ({
       </div>
       <Divider />
       <p
-        autoFocus
         id={`description-${id}`}
         className="list-description-input w-72 pb-0 pt-2 text-sm text-foreground-500 outline-none duration-100"
         contentEditable
