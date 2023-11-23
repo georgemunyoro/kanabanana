@@ -65,7 +65,7 @@ export const Board = ({ board }: BoardProps) => {
   const [isEditingBoardName, setIsEditingBoardName] = useState(false);
 
   return (
-    <div className="grow overflow-hidden">
+    <div className="flex h-full flex-col">
       <Navbar isBordered className="h-14">
         <NavbarContent className="h-10">
           <NavbarBrand className="pr-5">
@@ -91,7 +91,7 @@ export const Board = ({ board }: BoardProps) => {
           <NavbarItem></NavbarItem>
         </NavbarContent>
       </Navbar>
-      <div className="flex w-full grow gap-3 overflow-x-auto overflow-y-hidden p-5">
+      <div className="flex grow gap-3 overflow-x-auto p-5">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}
