@@ -1,9 +1,9 @@
-import Container from "@/components/Board/Container";
-import { Item } from "@/components/Board/Item";
+import List from "@/components/Board/List";
+import { Card } from "@/components/Board/Card";
 import { Navbar } from "@/components/Navbar";
 import {
   Button,
-  Card,
+  Card as NUICard,
   CardBody,
   CardHeader,
   ScrollShadow,
@@ -17,7 +17,6 @@ import {
   User,
   WifiOff,
 } from "@styled-icons/boxicons-regular";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { type ReactNode } from "react";
 
@@ -154,7 +153,7 @@ const FeatureCard = ({
 }) => {
   const slots = styles();
   return (
-    <Card isBlurred className={slots.card() + " hover:scale-105"}>
+    <NUICard isBlurred className={slots.card() + " hover:scale-105"}>
       <CardHeader className={slots.header()}>
         <div className={slots.iconWrapper()}>{icon}</div>
         <p className={slots.title()}>{title}</p>
@@ -162,7 +161,7 @@ const FeatureCard = ({
       <CardBody className={slots.body()}>
         <p className={slots.description()}>{description}</p>
       </CardBody>
-    </Card>
+    </NUICard>
   );
 };
 
@@ -170,26 +169,22 @@ const AnimatedDemo = () => {
   return (
     <div className="pointer-events-none -mt-10 flex w-full flex-col items-center">
       <div className="relative -left-4 w-min shadow-2xl shadow-black">
-        <Container
-          id={"test"}
-          title={"Done"}
-          description={"This is a description"}
-        >
-          <Item
+        <List id={"test"} title={"Done"} description={"This is a description"}>
+          <Card
             key={"test-0"}
             id={"test-0"}
             title={"Lorem ipsum"}
             description={"Dolor sit amet"}
           />
-        </Container>
+        </List>
       </div>
       <div className="relative -top-40 left-3 z-50 w-min shadow-2xl shadow-black">
-        <Container
+        <List
           id={"test"}
           title={"Todo"}
           description={"Tasks that are yet to go into development"}
         >
-          <Item
+          <Card
             key={"test-1"}
             id={"test-1"}
             title={"Lorem ipsum dolor sit amet"}
@@ -197,7 +192,7 @@ const AnimatedDemo = () => {
               "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             }
           />
-          <Item
+          <Card
             key={"test-0"}
             id={"test-0"}
             title={"Sign up for kanabanana"}
@@ -205,7 +200,7 @@ const AnimatedDemo = () => {
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             }
           />
-        </Container>
+        </List>
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ import {
 } from "@nextui-org/react";
 import { AddToQueue } from "@styled-icons/boxicons-regular";
 import { Inter } from "next/font/google";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -31,8 +31,6 @@ type AddListSchemaType = z.infer<typeof addListSchema>;
 export const AddListButton = ({ onAddList }: AddListButtonProps) => {
   const [isAddingList, setIsAddingList] = useState(false);
 
-  const ref = useRef<HTMLFormElement>(null);
-
   const { handleSubmit, register } = useForm<AddListSchemaType>({
     resolver: zodResolver(addListSchema),
   });
@@ -42,7 +40,7 @@ export const AddListButton = ({ onAddList }: AddListButtonProps) => {
       offset={10}
       placement="bottom-start"
       isOpen={isAddingList}
-      onOpenChange={(open) => setIsAddingList(open)}
+      onOpenChange={(isOpen) => setIsAddingList(isOpen)}
     >
       <PopoverTrigger onClick={() => setIsAddingList(true)}>
         <Button
@@ -59,7 +57,6 @@ export const AddListButton = ({ onAddList }: AddListButtonProps) => {
         <Card className="min-w-[300px]">
           <CardBody>
             <form
-              ref={ref}
               onSubmit={handleSubmit((data) => {
                 onAddList(data.name);
                 setIsAddingList(false);

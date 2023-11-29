@@ -16,7 +16,7 @@ import { type UniqueIdentifier } from "@dnd-kit/core";
 
 export const inter = Inter({ subsets: ["latin"] });
 
-export interface ContainerTitleProps {
+export interface ListTitleProps {
   id: UniqueIdentifier;
   title?: string;
   description?: string;
@@ -26,7 +26,7 @@ export interface ContainerTitleProps {
   listeners?: SyntheticListenerMap;
 }
 
-export const ContainerTitle = ({
+export const ListTitle = ({
   id,
   listeners,
   title,
@@ -34,7 +34,7 @@ export const ContainerTitle = ({
   onDelete,
   onChangeTitle,
   onChangeDescription,
-}: ContainerTitleProps) => {
+}: ListTitleProps) => {
   return (
     <div className="flex w-full flex-col gap-y-1 p-3 pt-0">
       <div className={cn("flex h-full items-center justify-between gap-2")}>

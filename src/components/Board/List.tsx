@@ -2,12 +2,12 @@ import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { type UniqueIdentifier } from "@dnd-kit/core";
-import { AddItemButton } from "./AddItemButton";
+import { AddCardButton } from "./AddCardButton";
 import { cn } from "@nextui-org/react";
 import { type AddCardHandler } from "./types";
-import { ContainerTitle } from "./ContainerTitle";
+import { ListTitle } from "./ListTitle";
 
-interface ContainerProps {
+interface ListProps {
   id: UniqueIdentifier;
   children: React.ReactNode;
   title?: string;
@@ -18,7 +18,7 @@ interface ContainerProps {
   onDelete?: () => void;
 }
 
-const Container = ({
+const List = ({
   id,
   children,
   title,
@@ -27,7 +27,7 @@ const Container = ({
   onChangeTitle,
   onChangeDescription,
   onDelete,
-}: ContainerProps) => {
+}: ListProps) => {
   const {
     attributes,
     setNodeRef,
@@ -57,7 +57,7 @@ const Container = ({
     >
       <div className="flex w-full items-center justify-between rounded-t-lg border-[1px] border-foreground-50 bg-black">
         <div className="flex w-full items-center p-2">
-          <ContainerTitle
+          <ListTitle
             id={id}
             title={title}
             description={description}
@@ -72,7 +72,7 @@ const Container = ({
         <div className="flex w-full flex-col gap-2 p-2">{children}</div>
       </div>
       <div className="w-full self-end rounded-b-lg border-[1px] border-foreground-50 bg-black p-2">
-        <AddItemButton
+        <AddCardButton
           onAddItem={(cardTitle) => onAddItem && onAddItem(id, cardTitle)}
         />
       </div>
@@ -80,4 +80,4 @@ const Container = ({
   );
 };
 
-export default Container;
+export default List;

@@ -2,10 +2,9 @@ import { type UniqueIdentifier } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import React, { useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
-import clsx from "clsx";
 import {
   Button,
-  Card,
+  Card as NUICard,
   CardBody,
   CardHeader,
   Divider,
@@ -23,23 +22,23 @@ import { Inter } from "next/font/google";
 import { Trash } from "@styled-icons/boxicons-regular";
 import { type BoardCard } from "./types";
 
-type ItemProps = {
+type CardProps = {
   id: UniqueIdentifier;
   title: string;
   description?: string;
-  onUpdateCard?: (updatedCard: BoardCard) => void;
+  onUpdate?: (updatedCard: BoardCard) => void;
   onDelete?: () => void;
 };
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const Item = ({
+export const Card = ({
   id,
   title,
   description,
-  onUpdateCard,
+  onUpdate: onUpdateCard,
   onDelete,
-}: ItemProps) => {
+}: CardProps) => {
   const {
     attributes,
     listeners,
@@ -66,14 +65,14 @@ export const Item = ({
         transition,
         transform: CSS.Translate.toString(transform),
       }}
-      className={clsx("w-80", isDragging && "opacity-50")}
+      className={cn("w-80", isDragging && "opacity-50")}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
         setIsEditModalOpen(true);
       }}
     >
-      <Card isHoverable radius="sm">
+      <NUICard isHoverable radius="sm">
         <CardHeader className="flex items-center p-1 py-3">
           <DragHandle className="self-baseline pt-1" listeners={listeners} />
           <div className="pl-2 pr-1">{title}</div>
@@ -82,7 +81,7 @@ export const Item = ({
         <CardBody className="text-sm text-foreground-500">
           <pre className="whitespace-pre-line font-sans">{description}</pre>
         </CardBody>
-      </Card>
+      </NUICard>
 
       <Modal
         isOpen={isEditModalOpen}

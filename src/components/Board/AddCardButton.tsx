@@ -5,36 +5,34 @@ import {
   Button,
   PopoverContent,
   cn,
-  Card,
+  Card as NUICard,
   CardBody,
   Divider,
   Input,
 } from "@nextui-org/react";
 import { AddToQueue } from "@styled-icons/boxicons-regular";
 import { Inter } from "next/font/google";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const inter = Inter({ subsets: ["latin"] });
 
-interface AddItemButtonProps {
+interface AddCardButtonProps {
   onAddItem: (itemName: string) => void;
 }
 
-const addItemSchema = z.object({
+const addCardSchema = z.object({
   name: z.string().min(1),
 });
 
-type AddItemSchemaType = z.infer<typeof addItemSchema>;
+type AddCardSchemaType = z.infer<typeof addCardSchema>;
 
-export const AddItemButton = ({ onAddItem }: AddItemButtonProps) => {
+export const AddCardButton = ({ onAddItem }: AddCardButtonProps) => {
   const [isAddingItem, setIsAddingItem] = useState(false);
 
-  const ref = useRef<HTMLFormElement>(null);
-
-  const { handleSubmit, register } = useForm<AddItemSchemaType>({
-    resolver: zodResolver(addItemSchema),
+  const { handleSubmit, register } = useForm<AddCardSchemaType>({
+    resolver: zodResolver(addCardSchema),
   });
 
   return (
@@ -51,10 +49,9 @@ export const AddItemButton = ({ onAddItem }: AddItemButtonProps) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className={cn("w-auto p-0 dark", inter.className)}>
-        <Card className="w-[300px]">
+        <NUICard className="w-[300px]">
           <CardBody>
             <form
-              ref={ref}
               onSubmit={handleSubmit((data) => {
                 onAddItem(data.name);
                 setIsAddingItem(false);
@@ -91,7 +88,7 @@ export const AddItemButton = ({ onAddItem }: AddItemButtonProps) => {
               </Button>
             </form>
           </CardBody>
-        </Card>
+        </NUICard>
       </PopoverContent>
     </Popover>
   );

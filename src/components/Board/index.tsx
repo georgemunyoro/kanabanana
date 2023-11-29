@@ -18,8 +18,8 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import Container from "./Container";
-import { Item } from "./Item";
+import List from "./List";
+import { Card } from "./Card";
 import { AddListButton } from "./AddListButton";
 import { type BoardData } from "./types";
 import { useBoard } from "./useBoard";
@@ -101,7 +101,7 @@ export const Board = ({ board }: BoardProps) => {
         >
           <SortableContext items={lists.map((list) => list.id)}>
             {lists.map((list) => (
-              <Container
+              <List
                 key={list.id}
                 id={list.id}
                 title={list.title}
@@ -120,19 +120,19 @@ export const Board = ({ board }: BoardProps) => {
               >
                 <SortableContext items={list.items.map((item) => item.id)}>
                   {list.items.map((item) => (
-                    <Item
+                    <Card
                       key={item.id}
                       id={item.id}
                       title={item.title}
                       description={item.description}
-                      onUpdateCard={(updatedCard) =>
+                      onDelete={() => deleteCard(list.id, item.id)}
+                      onUpdate={(updatedCard) =>
                         updateCard(list.id, updatedCard)
                       }
-                      onDelete={() => deleteCard(list.id, item.id)}
                     />
                   ))}
                 </SortableContext>
-              </Container>
+              </List>
             ))}
           </SortableContext>
 
@@ -140,7 +140,7 @@ export const Board = ({ board }: BoardProps) => {
             <div>
               {/* Drag Overlay For item Item */}
               {activeId && activeId.toString().includes("card") && (
-                <Item
+                <Card
                   id={activeId}
                   title={getCardTitle(activeId)}
                   description={getCardDescription(activeId)}
@@ -148,20 +148,20 @@ export const Board = ({ board }: BoardProps) => {
               )}
               {/* Drag Overlay For Container */}
               {activeId && activeId.toString().includes("list") && (
-                <Container
+                <List
                   id={activeId}
                   title={getListTitle(activeId)}
                   description={getListDescription(activeId)}
                 >
                   {getListItems(activeId).map((i) => (
-                    <Item
+                    <Card
                       key={i.id}
                       id={i.id}
                       title={i.title}
                       description={i.description}
                     />
                   ))}
-                </Container>
+                </List>
               )}
             </div>
           </DragOverlay>
